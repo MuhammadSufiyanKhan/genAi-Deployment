@@ -27,6 +27,23 @@ const interviewRouter = require("./routes/interview.routes")
 app.use("/api/auth", authRouter)
 app.use("/api/interview", interviewRouter)
 
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+    res.json({ status: "OK", message: "Server is running" })
+})
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error("Error:", err)
+    res.status(500).json({
+        error: "Internal server error",
+        message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+    })
+})
+
+// 404 handler
+app.use("*", (req, res) => {
+    res.status(404).json({ error: "Route not found" })
+})
 
 module.exports = app

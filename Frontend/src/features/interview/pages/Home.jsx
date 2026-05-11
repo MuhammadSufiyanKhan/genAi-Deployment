@@ -19,8 +19,6 @@ const Home = () => {
         if (file) {
             setUploadedFileName(file.name)
             setUploadSuccess(true)
-            // Clear success message after 3 seconds
-            setTimeout(() => setUploadSuccess(false), 3000)
         }
     }
 

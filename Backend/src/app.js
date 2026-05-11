@@ -7,7 +7,12 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: "*",
+    origin: [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://frontend-wine-psi-17.vercel.app",
+        "https://genai-deployment.vercel.app" // Add your production frontend URL
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true

@@ -2,7 +2,7 @@ import axios from "axios"
 
 
 const api = axios.create({
-    baseURL: "https://backend-seven-steel-88.vercel.app/",
+    baseURL: "https://backend-seven-steel-88.vercel.app",
     // baseURL: "http://localhost:3000",
     withCredentials: true
 })

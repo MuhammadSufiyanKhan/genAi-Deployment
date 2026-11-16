@@ -13,7 +13,7 @@ const scoreTone = (n) => (n >= 80 ? 'text-accent-3' : n >= 60 ? 'text-accent' : 
 
 const Home = () => {
 
-    const { generateReport, reports } = useInterview()
+    const { generateReport, reports, deleteReport } = useInterview()
     const [ generating, setGenerating ] = useState(false)
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
@@ -26,6 +26,9 @@ const Home = () => {
     const navigate = useNavigate()
     const { user } = useAuth()
     const [ error, setError ] = useState("")
+    const [ confirmId, setConfirmId ] = useState(null)
+    const [ deletingId, setDeletingId ] = useState(null)
+    const [ deleteError, setDeleteError ] = useState("")
 
     useLayoutEffect(() => {
         // the form is not on screen while a plan is generating, so there is nothing to animate
@@ -72,6 +75,15 @@ const Home = () => {
             return
         }
         navigate(`/interview/${data._id}`)
+    }
+
+    const handleDelete = async (id) => {
+        setDeleteError("")
+        setDeletingId(id)
+        const result = await deleteReport(id)
+        setDeletingId(null)
+        setConfirmId(null)
+        if (!result.ok) setDeleteError(result.message)
     }
 
     if (generating) {
@@ -205,19 +217,51 @@ const Home = () => {
                 {reports.length > 0 && (
                     <section className="enter mt-16">
                         <h2 className="text-2xl font-bold">My recent interview plans</h2>
+                        {deleteError && <p role="alert" className="mt-4 rounded-xl border border-accent-2/50 bg-accent-2/10 px-4 py-3 text-sm">{deleteError}</p>}
                         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {reports.map((report) => (
-                                <li key={report._id}>
-                                    <button
-                                        onClick={() => navigate(`/interview/${report._id}`)}
-                                        className="glass group w-full cursor-pointer rounded-2xl p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-accent"
-                                    >
-                                        <h3 className="text-lg font-bold">{report.title || 'Untitled position'}</h3>
-                                        <p className="mt-1 text-sm text-muted">Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
-                                        <p className={`mt-4 text-sm font-bold ${scoreTone(report.matchScore)}`}>Match score: {report.matchScore}%</p>
-                                    </button>
-                                </li>
-                            ))}
+                            {reports.map((report) => {
+                                const confirming = confirmId === report._id
+                                const deleting = deletingId === report._id
+                                return (
+                                    <li key={report._id} className="glass group relative rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:border-accent">
+                                        <button
+                                            onClick={() => navigate(`/interview/${report._id}`)}
+                                            className="w-full cursor-pointer rounded-2xl p-5 pr-14 text-left"
+                                        >
+                                            <h3 className="text-lg font-bold">{report.title || 'Untitled position'}</h3>
+                                            <p className="mt-1 text-sm text-muted">Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
+                                            <p className={`mt-4 text-sm font-bold ${scoreTone(report.matchScore)}`}>Match score: {report.matchScore}%</p>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setConfirmId(report._id)}
+                                            aria-label={`Delete plan ${report.title || 'Untitled position'}`}
+                                            title="Delete this plan"
+                                            className="absolute top-4 right-4 grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-line text-muted transition-colors hover:border-accent-2 hover:bg-accent-2/10 hover:text-accent-2"
+                                        >
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6" /></svg>
+                                        </button>
+
+                                        {confirming && (
+                                            <div role="alertdialog" aria-label="Confirm delete" className="absolute inset-0 grid content-center gap-3 rounded-2xl bg-[color-mix(in_srgb,var(--bg)_92%,transparent)] p-5 text-center backdrop-blur-sm">
+                                                <p className="font-bold">Delete this plan?</p>
+                                                <p className="text-sm text-muted">This cannot be undone.</p>
+                                                <div className="flex justify-center gap-3">
+                                                    <button onClick={() => setConfirmId(null)} disabled={deleting} className="btn-ghost !px-5 !py-2 text-sm">Cancel</button>
+                                                    <button
+                                                        onClick={() => handleDelete(report._id)}
+                                                        disabled={deleting}
+                                                        className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-accent-2 px-5 py-2 text-sm font-bold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+                                                    >
+                                                        {deleting ? 'Deleting' : 'Delete'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </li>
+                                )
+                            })}
                         </ul>
                     </section>
                 )}

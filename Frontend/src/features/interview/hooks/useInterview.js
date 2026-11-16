@@ -1,4 +1,4 @@
-import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf } from "../services/interview.api"
+import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf, deleteInterviewReport } from "../services/interview.api"
 import { useContext, useEffect } from "react"
 import { InterviewContext } from "../interview.context"
 import { useParams } from "react-router"
@@ -65,6 +65,17 @@ export const useInterview = () => {
         return response.interviewReports
     }
 
+    const deleteReport = async (interviewId) => {
+        try {
+            await deleteInterviewReport(interviewId)
+            setReports((current) => current.filter((r) => r._id !== interviewId))
+            return { ok: true }
+        } catch (error) {
+            console.log(error)
+            return { ok: false, message: error?.response?.data?.message || "We could not delete this plan. Try again." }
+        }
+    }
+
     const getResumePdf = async (interviewReportId) => {
         try {
             const response = await generateResumePdf({ interviewReportId })
@@ -93,6 +104,6 @@ export const useInterview = () => {
         }
     }, [ interviewId, userId ])
 
-    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf }
+    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf, deleteReport }
 
 }

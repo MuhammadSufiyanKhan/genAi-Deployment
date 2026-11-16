@@ -1,4 +1,5 @@
 const { generateInterviewReport, generateResumePdf } = require("../services/ai.service")
+const mongoose = require("mongoose")
 const interviewReportModel = require("../models/interviewReport.model")
 
 
@@ -123,4 +124,24 @@ async function generateResumePdfController(req, res) {
     res.send(pdfBuffer)
 }
 
-module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generateResumePdfController }
+/**
+ * @description Controller to delete one of the logged in user's interview reports.
+ */
+async function deleteInterviewReportController(req, res) {
+    const { interviewId } = req.params
+
+    if (!mongoose.isValidObjectId(interviewId)) {
+        return res.status(404).json({ message: "Interview report not found." })
+    }
+
+    // only the owner can delete; guest reports have no owner and cannot be deleted by anyone
+    const deleted = await interviewReportModel.findOneAndDelete({ _id: interviewId, user: req.user.id })
+
+    if (!deleted) {
+        return res.status(404).json({ message: "Interview report not found." })
+    }
+
+    res.status(200).json({ message: "Interview report deleted successfully." })
+}
+
+module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generateResumePdfController, deleteInterviewReportController }

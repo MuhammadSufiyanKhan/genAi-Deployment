@@ -1,6 +1,7 @@
 const express = require("express")
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
+const connectToDB = require("./config/database")
 
 const app = express()
 
@@ -29,6 +30,17 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
 }))
+
+// Make sure the database is connected before any route runs (reconnects after a failed start)
+app.use("/api", async (req, res, next) => {
+    if (req.path === "/health") return next()
+    try {
+        await connectToDB()
+        next()
+    } catch (err) {
+        res.status(503).json({ message: "The database is not reachable right now. Try again in a moment." })
+    }
+})
 
 /* require all the routes here */
 const authRouter = require("./routes/auth.routes")

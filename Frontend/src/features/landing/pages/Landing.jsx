@@ -55,8 +55,8 @@ const Landing = () => {
     const { user } = useAuth()
     const [ open, setOpen ] = useState(0)
 
-    const primaryTo = user ? '/app' : '/register'
-    const primaryLabel = user ? 'Open my reports' : 'Build my strategy'
+    const primaryTo = '/app'
+    const primaryLabel = 'Build my strategy'
 
     return (
         <div className='landing'>
@@ -68,7 +68,7 @@ const Landing = () => {
                     ) : (
                         <>
                             <Link to='/login' className='landing__link'>Log in</Link>
-                            <Link to='/register' className='landing__btn landing__btn--small'>Sign up</Link>
+                            <Link to='/register' className='landing__link'>Sign up</Link>
                         </>
                     )}
                 </nav>
@@ -87,7 +87,7 @@ const Landing = () => {
                             <Link to={primaryTo} className='landing__btn'>{primaryLabel}</Link>
                             <a href='#report' className='landing__link'>See what the report includes</a>
                         </div>
-                        <p className='hero__note'>Free to try. Takes about a minute to generate.</p>
+                        <p className='hero__note'>No account needed. Takes about 30 seconds to generate.</p>
                     </div>
 
                     <div className='hero__cards' aria-label='Example interview questions'>

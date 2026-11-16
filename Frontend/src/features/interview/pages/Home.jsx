@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
-import { useNavigate } from 'react-router'
+import { useNavigate, Link } from 'react-router'
+import { useAuth } from '../../auth/hooks/useAuth.js'
 
 const Home = () => {
 
@@ -13,6 +14,8 @@ const Home = () => {
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
+    const { user } = useAuth()
+    const [ error, setError ] = useState("")
 
     const handleResumeChange = (e) => {
         const file = e.target.files[0]
@@ -23,8 +26,13 @@ const Home = () => {
     }
 
     const handleGenerateReport = async () => {
+        setError("")
         const resumeFile = resumeInputRef.current.files[ 0 ]
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
+        if (!data || data.error) {
+            setError(data?.error || "We could not create your plan. Try again.")
+            return
+        }
         navigate(`/interview/${data._id}`)
     }
 
@@ -43,6 +51,9 @@ const Home = () => {
             <header className='page-header'>
                 <h1>Create Your Custom <span className='highlight'>Interview Plan</span></h1>
                 <p>Let our AI analyze the job requirements and your unique profile to build a winning strategy.</p>
+                {!user && (
+                    <p className='guest-note'>No account needed. <Link to='/login'>Log in</Link> if you want your plans saved.</p>
+                )}
             </header>
 
             {/* Main Card */}
@@ -134,6 +145,7 @@ const Home = () => {
                 </div>
 
                 {/* Card Footer */}
+                {error && <p className='form-error' role='alert'>{error}</p>}
                 <div className='interview-card__footer'>
                     <span className='footer-info'>AI-Powered Strategy Generation &bull; Approx 30s</span>
                     <button

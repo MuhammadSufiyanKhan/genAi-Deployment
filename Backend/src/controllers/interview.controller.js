@@ -9,22 +9,40 @@ const interviewReportModel = require("../models/interviewReport.model")
  */
 async function generateInterViewReportController(req, res) {
 
-    // unpdf works in serverless (no DOM/canvas needed), unlike pdf-parse
-    const { extractText, getDocumentProxy } = await import("unpdf")
-    const pdf = await getDocumentProxy(new Uint8Array(req.file.buffer))
-    const { text: pageTexts } = await extractText(pdf, { mergePages: true })
-    const resumeContent = { text: pageTexts }
-    const { selfDescription, jobDescription } = req.body
+    const { selfDescription = "", jobDescription = "" } = req.body
+
+    if (!jobDescription.trim()) {
+        return res.status(400).json({ message: "Add the job description to continue." })
+    }
+
+    let resumeText = ""
+
+    if (req.file) {
+        const isPdf = req.file.mimetype === "application/pdf" || /\.pdf$/i.test(req.file.originalname || "")
+        if (!isPdf) {
+            return res.status(400).json({ message: "Upload your resume as a PDF, or describe yourself in the text box." })
+        }
+        // unpdf works in serverless (no DOM/canvas needed), unlike pdf-parse
+        const { extractText, getDocumentProxy } = await import("unpdf")
+        const pdf = await getDocumentProxy(new Uint8Array(req.file.buffer))
+        const { text } = await extractText(pdf, { mergePages: true })
+        resumeText = text
+    }
+
+    if (!resumeText.trim() && !selfDescription.trim()) {
+        return res.status(400).json({ message: "Add a resume or a short description of yourself to continue." })
+    }
 
     const interViewReportByAi = await generateInterviewReport({
-        resume: resumeContent.text,
+        resume: resumeText,
         selfDescription,
         jobDescription
     })
 
     const interviewReport = await interviewReportModel.create({
-        user: req.user.id,
-        resume: resumeContent.text,
+        // guests have no account: the report is reachable only through its link
+        user: req.user ? req.user.id : undefined,
+        resume: resumeText,
         selfDescription,
         jobDescription,
         ...interViewReportByAi
@@ -37,6 +55,13 @@ async function generateInterViewReportController(req, res) {
 
 }
 
+// A logged-in user can open their own reports; guest reports (no owner) open by link.
+function reportAccessFilter(req, id) {
+    return req.user
+        ? { _id: id, $or: [ { user: req.user.id }, { user: { $exists: false } }, { user: null } ] }
+        : { _id: id, $or: [ { user: { $exists: false } }, { user: null } ] }
+}
+
 /**
  * @description Controller to get interview report by interviewId.
  */
@@ -44,7 +69,7 @@ async function getInterviewReportByIdController(req, res) {
 
     const { interviewId } = req.params
 
-    const interviewReport = await interviewReportModel.findOne({ _id: interviewId, user: req.user.id })
+    const interviewReport = await interviewReportModel.findOne(reportAccessFilter(req, interviewId))
 
     if (!interviewReport) {
         return res.status(404).json({
@@ -78,7 +103,7 @@ async function getAllInterviewReportsController(req, res) {
 async function generateResumePdfController(req, res) {
     const { interviewReportId } = req.params
 
-    const interviewReport = await interviewReportModel.findById(interviewReportId)
+    const interviewReport = await interviewReportModel.findOne(reportAccessFilter(req, interviewReportId))
 
     if (!interviewReport) {
         return res.status(404).json({

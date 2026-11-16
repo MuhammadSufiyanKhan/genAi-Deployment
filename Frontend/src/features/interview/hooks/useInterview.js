@@ -2,12 +2,14 @@ import { getAllInterviewReports, generateInterviewReport, getInterviewReportById
 import { useContext, useEffect } from "react"
 import { InterviewContext } from "../interview.context"
 import { useParams } from "react-router"
+import { useAuth } from "../../auth/hooks/useAuth"
 
 
 export const useInterview = () => {
 
     const context = useContext(InterviewContext)
     const { interviewId } = useParams()
+    const { user } = useAuth()
 
     if (!context) {
         throw new Error("useInterview must be used within an InterviewProvider")
@@ -23,6 +25,8 @@ export const useInterview = () => {
             setReport(response.interviewReport)
         } catch (error) {
             console.log(error)
+            const message = error?.response?.data?.message || "We could not create your plan. Check your connection and try again."
+            return { error: message }
         } finally {
             setLoading(false)
         }
@@ -38,6 +42,7 @@ export const useInterview = () => {
             setReport(response.interviewReport)
         } catch (error) {
             console.log(error)
+            return null
         } finally {
             setLoading(false)
         }
@@ -52,6 +57,7 @@ export const useInterview = () => {
             setReports(response.interviewReports)
         } catch (error) {
             console.log(error)
+            return []
         } finally {
             setLoading(false)
         }
@@ -81,10 +87,10 @@ export const useInterview = () => {
     useEffect(() => {
         if (interviewId) {
             getReportById(interviewId)
-        } else {
+        } else if (user) {
             getReports()
         }
-    }, [ interviewId ])
+    }, [ interviewId, user ])
 
     return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf }
 

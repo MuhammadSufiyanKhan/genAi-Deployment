@@ -40,4 +40,26 @@ async function authUser(req, res, next) {
 }
 
 
-module.exports = { authUser }
+/**
+ * Like authUser, but never blocks: if there is a valid login cookie req.user is set,
+ * otherwise the request continues as an anonymous visitor.
+ */
+async function optionalAuth(req, res, next) {
+    const token = req.cookies.token
+
+    if (token) {
+        try {
+            const isTokenBlacklisted = await tokenBlacklistModel.findOne({ token })
+            if (!isTokenBlacklisted) {
+                req.user = jwt.verify(token, process.env.JWT_SECRET)
+            }
+        } catch (err) {
+            // invalid or expired token: treat as anonymous
+        }
+    }
+
+    next()
+}
+
+
+module.exports = { authUser, optionalAuth }

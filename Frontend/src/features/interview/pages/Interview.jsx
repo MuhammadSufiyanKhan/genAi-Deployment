@@ -62,11 +62,22 @@ const Interview = () => {
     const { report, getReportById, loading, getResumePdf } = useInterview()
     const { interviewId } = useParams()
 
+    const [ notFound, setNotFound ] = useState(false)
+
     useEffect(() => {
         if (interviewId) {
-            getReportById(interviewId)
+            getReportById(interviewId).then((r) => setNotFound(!r))
         }
     }, [ interviewId ])
+
+    if (notFound) {
+        return (
+            <main className='loading-screen'>
+                <h1>We could not find this plan.</h1>
+                <p><a href='/app'>Create a new plan</a></p>
+            </main>
+        )
+    }
 
 
 

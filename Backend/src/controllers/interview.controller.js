@@ -9,9 +9,11 @@ const interviewReportModel = require("../models/interviewReport.model")
  */
 async function generateInterViewReportController(req, res) {
 
-    // Loaded lazily: pdf-parse needs canvas polyfills at import time and must not crash the whole API on startup
-    const pdfParse = require("pdf-parse")
-    const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText()
+    // unpdf works in serverless (no DOM/canvas needed), unlike pdf-parse
+    const { extractText, getDocumentProxy } = await import("unpdf")
+    const pdf = await getDocumentProxy(new Uint8Array(req.file.buffer))
+    const { text: pageTexts } = await extractText(pdf, { mergePages: true })
+    const resumeContent = { text: pageTexts }
     const { selfDescription, jobDescription } = req.body
 
     const interViewReportByAi = await generateInterviewReport({

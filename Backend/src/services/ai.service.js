@@ -61,7 +61,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 async function launchBrowser() {
     if (process.env.VERCEL) {
         const { default: chromium } = await import("@sparticuz/chromium")
-        const puppeteer = require("puppeteer-core")
+        const { default: puppeteer } = await import("puppeteer-core")
         return puppeteer.launch({
             args: await puppeteer.defaultArgs({ args: chromium.args, headless: "shell" }),
             executablePath: await chromium.executablePath(),
@@ -69,7 +69,8 @@ async function launchBrowser() {
         })
     }
 
-    return require("puppeteer").launch()
+    const { default: puppeteer } = await import("puppeteer")
+    return puppeteer.launch()
 }
 
 async function generatePdfFromHtml(htmlContent) {

@@ -5,36 +5,38 @@
 
 /* ── Theme tokens: light by default, overridden in .dark ───────────────── */
 :root {
-    --bg: #f3f6f5;
-    --bg-soft: #e6ecea;
-    --fg: #0e1a1c;
-    --muted: #53656a;
-    --card: rgba(255, 255, 255, 0.78);
+    --bg: #f5f6ff;
+    --bg-soft: #e9ebff;
+    --fg: #101433;
+    --muted: #565d85;
+    --card: rgba(255, 255, 255, 0.8);
     --card-solid: #ffffff;
-    --line: rgba(14, 40, 44, 0.13);
-    --accent: #1d7a72;       /* deep teal */
-    --accent-2: #a9782a;     /* antique gold */
-    --accent-3: #3b6aa8;     /* steel blue */
-    --danger: #b3423a;       /* muted red */
-    --on-accent: #ffffff;
-    --glow: rgba(29, 122, 114, 0.22);
+    --line: rgba(28, 36, 110, 0.14);
+    --accent: #e8532c;       /* coral */
+    --accent-2: #c77a07;     /* amber */
+    --accent-3: #2f5bd9;     /* royal blue */
+    --danger: #c92a3e;       /* red */
+    --success: #1c9a5b;      /* green */
+    --on-accent: #1d0b04;
+    --glow: rgba(232, 83, 44, 0.24);
     color-scheme: light;
 }
 
 .dark {
-    --bg: #0a0e12;
-    --bg-soft: #10161c;
-    --fg: #e9eeee;
-    --muted: #8d9ba0;
-    --card: rgba(255, 255, 255, 0.045);
-    --card-solid: #11181e;
-    --line: rgba(255, 255, 255, 0.1);
-    --accent: #3fae9f;       /* soft teal */
-    --accent-2: #d3a65a;     /* soft gold */
-    --accent-3: #6f97cf;     /* soft blue */
-    --danger: #e0766d;       /* soft red */
-    --on-accent: #06171a;
-    --glow: rgba(63, 174, 159, 0.2);
+    --bg: #0a1030;
+    --bg-soft: #111a4a;
+    --fg: #f3f5ff;
+    --muted: #a4acd8;
+    --card: rgba(255, 255, 255, 0.07);
+    --card-solid: #131c52;
+    --line: rgba(255, 255, 255, 0.14);
+    --accent: #ff7a45;       /* coral */
+    --accent-2: #ffc247;     /* amber */
+    --accent-3: #6b8dff;     /* royal blue */
+    --danger: #ff5d6e;       /* red */
+    --success: #3ccf86;      /* green */
+    --on-accent: #1d0b04;
+    --glow: rgba(255, 122, 69, 0.26);
     color-scheme: dark;
 }
 
@@ -53,6 +55,7 @@
     --color-accent-2: var(--accent-2);
     --color-accent-3: var(--accent-3);
     --color-danger: var(--danger);
+    --color-success: var(--success);
     --color-on-accent: var(--on-accent);
 
     --animate-marquee: marquee 38s linear infinite;
@@ -74,6 +77,7 @@
 }
 
 @layer base {
+    /* only <html> paints the page color: a body background would cover the fixed glow layer behind the content */
     html {
         background: var(--bg);
         scroll-behavior: auto;
@@ -82,11 +86,10 @@
     body {
         margin: 0;
         min-height: 100vh;
-        background: var(--bg);
         color: var(--fg);
         font-family: var(--font-sans);
         -webkit-font-smoothing: antialiased;
-        transition: background-color 0.4s ease, color 0.4s ease;
+        transition: color 0.4s ease;
     }
 
     h1, h2, h3 {
@@ -113,7 +116,7 @@
     }
 
     .text-gradient {
-        background: linear-gradient(100deg, var(--accent) 0%, var(--accent-3) 50%, var(--accent-2) 100%);
+        background: linear-gradient(100deg, var(--accent) 0%, var(--accent-2) 100%);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -130,7 +133,7 @@
         border-radius: 999px;
         font-weight: 700;
         color: var(--on-accent);
-        background: linear-gradient(110deg, var(--accent), var(--accent-3));
+        background: linear-gradient(110deg, var(--accent), var(--accent-2));
         box-shadow: 0 10px 40px -12px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.35);
         transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
         cursor: pointer;
@@ -139,7 +142,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.28) 50%, transparent 70%);
+            background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
             transform: translateX(-100%);
         }
         &:hover { transform: translateY(-2px); box-shadow: 0 16px 50px -10px var(--glow); }

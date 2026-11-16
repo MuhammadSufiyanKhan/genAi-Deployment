@@ -15,7 +15,7 @@ const AuthShell = ({ title, subtitle, children, footer }) => (
                 <ul className="mt-8 grid gap-3 text-muted">
                     {[ "Your plans stay saved", "Open them from any device", "Download tailored resumes anytime" ].map((t) => (
                         <li key={t} className="flex items-center gap-3">
-                            <span className="grid h-6 w-6 place-items-center rounded-full bg-accent-3/20 text-accent-3">
+                            <span className="grid h-6 w-6 place-items-center rounded-full bg-success/20 text-success">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5 9-10" /></svg>
                             </span>
                             {t}

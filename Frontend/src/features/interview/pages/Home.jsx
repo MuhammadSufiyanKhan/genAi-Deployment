@@ -9,7 +9,7 @@ import GeneratingScreen from '../../ui/GeneratingScreen'
 const MAX_JD = 5000
 const MAX_FILE_MB = 3
 
-const scoreTone = (n) => (n >= 80 ? 'text-accent' : n >= 60 ? 'text-accent-2' : 'text-danger')
+const scoreTone = (n) => (n >= 80 ? 'text-success' : n >= 60 ? 'text-accent-2' : 'text-danger')
 
 const Home = () => {
 
@@ -160,11 +160,11 @@ const Home = () => {
                                     onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
                                     onDragLeave={() => setDragging(false)}
                                     onDrop={handleDrop}
-                                    className={`flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed px-5 py-8 text-center transition-all duration-300 ${uploadSuccess ? 'border-accent-3 bg-accent-3/10' : dragging ? 'scale-[1.01] border-accent bg-accent/10' : 'border-line hover:border-accent hover:bg-accent/5'}`}
+                                    className={`flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed px-5 py-8 text-center transition-all duration-300 ${uploadSuccess ? 'border-success bg-success/10' : dragging ? 'scale-[1.01] border-accent bg-accent/10' : 'border-line hover:border-accent hover:bg-accent/5'}`}
                                 >
                                     {uploadSuccess ? (
                                         <>
-                                            <span className="grid h-11 w-11 place-items-center rounded-full bg-accent text-on-accent" aria-hidden>
+                                            <span className="grid h-11 w-11 place-items-center rounded-full bg-success text-on-accent" aria-hidden>
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5 9-10" /></svg>
                                             </span>
                                             <p className="font-semibold break-all">{uploadedFileName}</p>

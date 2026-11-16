@@ -17,7 +17,7 @@ const vertex = /* glsl */ `
         p += normalize(position) * n * 0.085;
         vMix = 0.5 + 0.5 * sin(aSeed * 6.2831 + uTime * 0.6);
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
-        gl_PointSize = (1.3 + aSeed * 1.9) * uPixel * (5.2 / -mv.z);
+        gl_PointSize = (1.9 + aSeed * 2.3) * uPixel * (5.2 / -mv.z);
         gl_Position = projectionMatrix * mv;
     }
 `
@@ -36,8 +36,8 @@ const fragment = /* glsl */ `
 `
 
 const palette = {
-    dark: { a: "#58c4b4", b: "#8fb3e3", ring: "#d3a65a", alpha: 1, blending: THREE.AdditiveBlending },
-    light: { a: "#1d7a72", b: "#3b6aa8", ring: "#a9782a", alpha: 0.9, blending: THREE.NormalBlending }
+    dark: { a: "#ff8a5c", b: "#ffc247", ring: "#6b8dff", alpha: 1, blending: THREE.AdditiveBlending },
+    light: { a: "#e8532c", b: "#2f5bd9", ring: "#c77a07", alpha: 0.9, blending: THREE.NormalBlending }
 }
 
 // Fibonacci sphere: evenly spread points on a sphere
@@ -104,7 +104,7 @@ const HeroScene = () => {
         group.add(orb)
 
         // inner wireframe core
-        const coreMat = new THREE.MeshBasicMaterial({ wireframe: true, transparent: true, opacity: 0.16 })
+        const coreMat = new THREE.MeshBasicMaterial({ wireframe: true, transparent: true, opacity: 0.3 })
         const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.05, 2), coreMat)
         group.add(core)
 

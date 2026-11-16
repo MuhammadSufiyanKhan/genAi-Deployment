@@ -45,7 +45,7 @@ const steps = [
 const gaps = [
     { skill: 'Kubernetes', level: 'High', w: 86, color: 'bg-danger' },
     { skill: 'GraphQL', level: 'Medium', w: 58, color: 'bg-accent-2' },
-    { skill: 'Terraform', level: 'Low', w: 30, color: 'bg-accent' }
+    { skill: 'Terraform', level: 'Low', w: 30, color: 'bg-accent-3' }
 ]
 
 const closing = 'Your next interview is easier with a plan.'.split(' ')
@@ -233,7 +233,7 @@ const Landing = () => {
                     </div>
 
                     {/* resume */}
-                    <div data-reveal className='relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent to-accent-3 p-7 text-on-accent md:col-span-6'>
+                    <div data-reveal className='relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent to-accent-2 p-7 text-on-accent md:col-span-6'>
                         <div className='relative z-10 flex flex-wrap items-center justify-between gap-4'>
                             <div>
                                 <h3 className='text-2xl font-bold'>Plus a resume tailored to the job</h3>
@@ -296,7 +296,7 @@ const Landing = () => {
                     <ol className='grid gap-12'>
                         {steps.map((s, i) => (
                             <li key={s.title} data-reveal className='relative'>
-                                <span className='absolute top-0 -left-12 grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-accent to-accent-3 font-display text-sm font-extrabold text-on-accent shadow-lg sm:-left-16 sm:h-12 sm:w-12 sm:text-base'>{i + 1}</span>
+                                <span className='absolute top-0 -left-12 grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-accent to-accent-2 font-display text-sm font-extrabold text-on-accent shadow-lg sm:-left-16 sm:h-12 sm:w-12 sm:text-base'>{i + 1}</span>
                                 <h3 className='text-2xl font-bold'>{s.title}</h3>
                                 <p className='mt-2 max-w-lg text-muted'>{s.body}</p>
                             </li>

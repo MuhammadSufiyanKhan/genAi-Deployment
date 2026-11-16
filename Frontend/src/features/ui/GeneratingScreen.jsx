@@ -16,7 +16,7 @@ const GeneratingScreen = ({ title = "Building your plan", steps = [] }) => {
                 <div className="relative mx-auto mb-10 h-32 w-32">
                     <span className="absolute inset-0 animate-spin-slow rounded-full border-2 border-dashed border-accent/60" />
                     <span className="absolute inset-3 animate-spin rounded-full border-2 border-transparent border-t-accent-2 border-r-accent-3" />
-                    <span className="absolute inset-8 animate-pulse rounded-full bg-gradient-to-br from-accent to-accent-3 shadow-[0_0_60px_var(--glow)]" />
+                    <span className="absolute inset-8 animate-pulse rounded-full bg-gradient-to-br from-accent to-accent-2 shadow-[0_0_60px_var(--glow)]" />
                 </div>
                 <h1 className="text-3xl font-extrabold sm:text-4xl">{title}</h1>
                 {steps.length > 0 && (

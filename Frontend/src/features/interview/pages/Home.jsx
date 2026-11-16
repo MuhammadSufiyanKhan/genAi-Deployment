@@ -13,7 +13,8 @@ const scoreTone = (n) => (n >= 80 ? 'text-accent-3' : n >= 60 ? 'text-accent' : 
 
 const Home = () => {
 
-    const { loading, generateReport, reports } = useInterview()
+    const { generateReport, reports } = useInterview()
+    const [ generating, setGenerating ] = useState(false)
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
     const [ uploadedFileName, setUploadedFileName ] = useState("")
@@ -32,7 +33,7 @@ const Home = () => {
             gsap.from('.enter', { y: 36, opacity: 0, duration: 0.9, stagger: 0.12, ease: 'expo.out' })
         }, pageRef)
         return () => ctx.revert()
-    }, [ loading ])
+    }, [ generating ])
 
     const handleResumeChange = (e) => {
         const file = e.target.files[0]
@@ -61,7 +62,9 @@ const Home = () => {
     const handleGenerateReport = async () => {
         setError("")
         const resumeFile = resumeInputRef.current.files[ 0 ]
+        setGenerating(true)
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
+        setGenerating(false)
         if (!data || data.error) {
             setError(data?.error || "We could not create your plan. Try again.")
             return
@@ -69,7 +72,7 @@ const Home = () => {
         navigate(`/interview/${data._id}`)
     }
 
-    if (loading) {
+    if (generating) {
         return (
             <>
                 <SiteHeader />

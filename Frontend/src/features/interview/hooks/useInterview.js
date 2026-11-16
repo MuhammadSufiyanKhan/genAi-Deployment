@@ -84,13 +84,14 @@ export const useInterview = () => {
         }
     }
 
+    const userId = user?.id
+
     useEffect(() => {
-        if (interviewId) {
-            getReportById(interviewId)
-        } else if (user) {
+        // the report page loads its own plan by id; here we only load the user's list
+        if (!interviewId && userId) {
             getReports()
         }
-    }, [ interviewId, user ])
+    }, [ interviewId, userId ])
 
     return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf }
 

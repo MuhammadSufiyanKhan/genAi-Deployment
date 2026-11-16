@@ -6,14 +6,25 @@ const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
+// Allowed frontends: local dev, known production aliases, any extra origins from CLIENT_URL (comma separated),
+// and this Vercel team's frontend deployments (per-deployment and branch preview URLs).
+const allowedOrigins = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://frontend-wine-psi-17.vercel.app",
+    "https://genai-deployment.vercel.app",
+    ...(process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",").map(o => o.trim()) : [])
+]
+const vercelFrontendPattern = /^https:\/\/frontend-[a-z0-9-]+-muhammadsufiyankhans-projects\.vercel\.app$/
+
 app.use(cors({
-    origin: [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "https://frontend-wine-psi-17.vercel.app",
-        "https://genai-deployment.vercel.app" // Add your production frontend URL
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin) || vercelFrontendPattern.test(origin)) {
+            return callback(null, true)
+        }
+        return callback(null, false)
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
 }))

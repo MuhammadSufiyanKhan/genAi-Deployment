@@ -14,7 +14,7 @@ const ThemeToggle = () => {
             className="glass relative h-9 w-[4.25rem] shrink-0 cursor-pointer rounded-full transition-colors hover:border-accent"
         >
             <span
-                className={`absolute top-1 left-1 grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-accent to-accent-2 text-white shadow-lg transition-transform duration-300 ${isDark ? "translate-x-[2rem]" : "translate-x-0"}`}
+                className={`absolute top-1 left-1 grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-accent to-accent-3 text-on-accent shadow-lg transition-transform duration-300 ${isDark ? "translate-x-[2rem]" : "translate-x-0"}`}
             >
                 {isDark ? (
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>

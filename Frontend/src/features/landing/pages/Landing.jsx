@@ -43,9 +43,9 @@ const steps = [
 ]
 
 const gaps = [
-    { skill: 'Kubernetes', level: 'High', w: 86, color: 'bg-accent-2' },
-    { skill: 'GraphQL', level: 'Medium', w: 58, color: 'bg-accent' },
-    { skill: 'Terraform', level: 'Low', w: 30, color: 'bg-accent-3' }
+    { skill: 'Kubernetes', level: 'High', w: 86, color: 'bg-danger' },
+    { skill: 'GraphQL', level: 'Medium', w: 58, color: 'bg-accent-2' },
+    { skill: 'Terraform', level: 'Low', w: 30, color: 'bg-accent' }
 ]
 
 const closing = 'Your next interview is easier with a plan.'.split(' ')
@@ -180,7 +180,7 @@ const Landing = () => {
                                 <circle className='ring-fill' cx='50' cy='50' r='42' fill='none' stroke='url(#ringGrad)' strokeWidth='8' strokeLinecap='round' strokeDasharray='264' strokeDashoffset='264' />
                                 <defs>
                                     <linearGradient id='ringGrad' x1='0' y1='0' x2='1' y2='1'>
-                                        <stop offset='0' stopColor='var(--accent-3)' />
+                                        <stop offset='0' stopColor='var(--accent)' />
                                         <stop offset='1' stopColor='var(--accent-2)' />
                                     </linearGradient>
                                 </defs>
@@ -233,13 +233,13 @@ const Landing = () => {
                     </div>
 
                     {/* resume */}
-                    <div data-reveal className='relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent to-accent-2 p-7 text-white md:col-span-6'>
+                    <div data-reveal className='relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent to-accent-3 p-7 text-on-accent md:col-span-6'>
                         <div className='relative z-10 flex flex-wrap items-center justify-between gap-4'>
                             <div>
                                 <h3 className='text-2xl font-bold'>Plus a resume tailored to the job</h3>
-                                <p className='mt-2 max-w-xl text-white/85'>Download a clean, ATS-friendly resume rewritten for the role you are applying to.</p>
+                                <p className='mt-2 max-w-xl text-on-accent/85'>Download a clean, ATS-friendly resume rewritten for the role you are applying to.</p>
                             </div>
-                            <Link to='/app' className='rounded-full bg-white px-6 py-3 font-bold text-[#12102b] transition-transform hover:-translate-y-0.5'>Try it free</Link>
+                            <Link to='/app' className='rounded-full bg-white px-6 py-3 font-bold text-[#0b1517] transition-transform hover:-translate-y-0.5'>Try it free</Link>
                         </div>
                         <div aria-hidden className='absolute -right-10 -bottom-16 h-52 w-52 rounded-full bg-white/15 blur-2xl' />
                     </div>
@@ -296,7 +296,7 @@ const Landing = () => {
                     <ol className='grid gap-12'>
                         {steps.map((s, i) => (
                             <li key={s.title} data-reveal className='relative'>
-                                <span className='absolute top-0 -left-12 grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-accent to-accent-2 font-display text-sm font-extrabold text-white shadow-lg sm:-left-16 sm:h-12 sm:w-12 sm:text-base'>{i + 1}</span>
+                                <span className='absolute top-0 -left-12 grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-accent to-accent-3 font-display text-sm font-extrabold text-on-accent shadow-lg sm:-left-16 sm:h-12 sm:w-12 sm:text-base'>{i + 1}</span>
                                 <h3 className='text-2xl font-bold'>{s.title}</h3>
                                 <p className='mt-2 max-w-lg text-muted'>{s.body}</p>
                             </li>

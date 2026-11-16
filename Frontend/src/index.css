@@ -5,32 +5,36 @@
 
 /* ── Theme tokens: light by default, overridden in .dark ───────────────── */
 :root {
-    --bg: #f5f4ff;
-    --bg-soft: #ebe9ff;
-    --fg: #0c0b22;
-    --muted: #5a5a7a;
-    --card: rgba(255, 255, 255, 0.72);
+    --bg: #f3f6f5;
+    --bg-soft: #e6ecea;
+    --fg: #0e1a1c;
+    --muted: #53656a;
+    --card: rgba(255, 255, 255, 0.78);
     --card-solid: #ffffff;
-    --line: rgba(30, 20, 90, 0.12);
-    --accent: #6b46ff;
-    --accent-2: #ff3d8b;
-    --accent-3: #0aa6c9;
-    --glow: rgba(107, 70, 255, 0.28);
+    --line: rgba(14, 40, 44, 0.13);
+    --accent: #1d7a72;       /* deep teal */
+    --accent-2: #a9782a;     /* antique gold */
+    --accent-3: #3b6aa8;     /* steel blue */
+    --danger: #b3423a;       /* muted red */
+    --on-accent: #ffffff;
+    --glow: rgba(29, 122, 114, 0.22);
     color-scheme: light;
 }
 
 .dark {
-    --bg: #05060f;
-    --bg-soft: #0b0d1f;
-    --fg: #eef0ff;
-    --muted: #9b9dc4;
+    --bg: #0a0e12;
+    --bg-soft: #10161c;
+    --fg: #e9eeee;
+    --muted: #8d9ba0;
     --card: rgba(255, 255, 255, 0.045);
-    --card-solid: #0f1226;
+    --card-solid: #11181e;
     --line: rgba(255, 255, 255, 0.1);
-    --accent: #8f73ff;
-    --accent-2: #ff4d97;
-    --accent-3: #22e1ff;
-    --glow: rgba(143, 115, 255, 0.35);
+    --accent: #3fae9f;       /* soft teal */
+    --accent-2: #d3a65a;     /* soft gold */
+    --accent-3: #6f97cf;     /* soft blue */
+    --danger: #e0766d;       /* soft red */
+    --on-accent: #06171a;
+    --glow: rgba(63, 174, 159, 0.2);
     color-scheme: dark;
 }
 
@@ -48,6 +52,8 @@
     --color-accent: var(--accent);
     --color-accent-2: var(--accent-2);
     --color-accent-3: var(--accent-3);
+    --color-danger: var(--danger);
+    --color-on-accent: var(--on-accent);
 
     --animate-marquee: marquee 38s linear infinite;
     --animate-float: float 7s ease-in-out infinite;
@@ -88,7 +94,7 @@
         letter-spacing: -0.03em;
     }
 
-    ::selection { background: var(--accent); color: #fff; }
+    ::selection { background: var(--accent); color: var(--on-accent); }
 
     :focus-visible { outline: 2px solid var(--accent-3); outline-offset: 3px; }
 
@@ -107,7 +113,7 @@
     }
 
     .text-gradient {
-        background: linear-gradient(100deg, var(--accent) 0%, var(--accent-2) 55%, var(--accent-3) 100%);
+        background: linear-gradient(100deg, var(--accent) 0%, var(--accent-3) 50%, var(--accent-2) 100%);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -123,8 +129,8 @@
         padding: 0.85rem 1.6rem;
         border-radius: 999px;
         font-weight: 700;
-        color: #fff;
-        background: linear-gradient(110deg, var(--accent), var(--accent-2));
+        color: var(--on-accent);
+        background: linear-gradient(110deg, var(--accent), var(--accent-3));
         box-shadow: 0 10px 40px -12px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.35);
         transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
         cursor: pointer;
@@ -133,7 +139,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+            background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.28) 50%, transparent 70%);
             transform: translateX(-100%);
         }
         &:hover { transform: translateY(-2px); box-shadow: 0 16px 50px -10px var(--glow); }

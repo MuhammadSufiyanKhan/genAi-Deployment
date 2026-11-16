@@ -14,9 +14,9 @@ const NAV_ITEMS = [
 ]
 
 const severityStyle = {
-    high: 'border-accent-2/60 bg-accent-2/15 text-accent-2',
-    medium: 'border-accent/60 bg-accent/15 text-accent',
-    low: 'border-accent-3/60 bg-accent-3/15 text-accent-3',
+    high: 'border-danger/60 bg-danger/15 text-danger',
+    medium: 'border-accent-2/60 bg-accent-2/15 text-accent-2',
+    low: 'border-accent/60 bg-accent/15 text-accent',
 }
 
 const Icon = ({ children }) => (
@@ -62,7 +62,7 @@ const SaveToggle = ({ checked, busy, onToggle, hint }) => (
                 aria-labelledby="save-label"
                 disabled={busy}
                 onClick={onToggle}
-                className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full transition-colors duration-300 disabled:opacity-60 ${checked ? 'bg-gradient-to-r from-accent to-accent-2' : 'bg-line'}`}
+                className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full transition-colors duration-300 disabled:opacity-60 ${checked ? 'bg-gradient-to-r from-accent to-accent-3' : 'bg-line'}`}
             >
                 <span className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-white shadow transition-transform duration-300 ${checked ? 'translate-x-5' : ''}`} />
             </button>
@@ -105,7 +105,7 @@ const SavePrompt = ({ interviewId, onClose }) => {
 const RoadMapDay = ({ day }) => (
     <div className="glass relative rounded-2xl p-5">
         <div className="flex items-center gap-3">
-            <span className="rounded-lg bg-gradient-to-br from-accent to-accent-2 px-3 py-1 text-sm font-extrabold text-white">Day {day.day}</span>
+            <span className="rounded-lg bg-gradient-to-br from-accent to-accent-3 px-3 py-1 text-sm font-extrabold text-on-accent">Day {day.day}</span>
             <h3 className="text-lg font-bold">{day.focus}</h3>
         </div>
         <ul className="mt-4 grid gap-2.5">
@@ -140,7 +140,7 @@ const ScoreRing = ({ value }) => {
             <svg viewBox="0 0 120 120" className="-rotate-90">
                 <defs>
                     <linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stopColor="var(--accent-3)" />
+                        <stop offset="0" stopColor="var(--accent)" />
                         <stop offset="1" stopColor="var(--accent-2)" />
                     </linearGradient>
                 </defs>
@@ -270,7 +270,7 @@ const Interview = () => {
                                     key={item.id}
                                     onClick={() => setActiveNav(item.id)}
                                     aria-current={activeNav === item.id ? 'page' : undefined}
-                                    className={`flex shrink-0 cursor-pointer items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeNav === item.id ? 'bg-gradient-to-r from-accent to-accent-2 text-white shadow-[0_10px_30px_-12px_var(--glow)]' : 'glass text-muted hover:text-fg'}`}
+                                    className={`flex shrink-0 cursor-pointer items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeNav === item.id ? 'bg-gradient-to-r from-accent to-accent-3 text-on-accent shadow-[0_10px_30px_-12px_var(--glow)]' : 'glass text-muted hover:text-fg'}`}
                                 >
                                     <Icon>{item.icon}</Icon>
                                     {item.label}
@@ -289,7 +289,7 @@ const Interview = () => {
                             </>)}
                         </button>
                         {downloading && <p className="mt-2 text-xs text-muted">This can take up to 30 seconds.</p>}
-                        {downloadError && <p role="alert" className="mt-2 text-xs text-accent-2">{downloadError}</p>}
+                        {downloadError && <p role="alert" className="mt-2 text-xs text-danger">{downloadError}</p>}
                     </nav>
 
                     {/* Center */}
@@ -333,7 +333,7 @@ const Interview = () => {
                                     ))}
                                 </div>
                             )}
-                            <p className="mt-4 text-xs text-muted">Pink is high priority, purple is medium, cyan is low.</p>
+                            <p className="mt-4 text-xs text-muted">Red is high priority, gold is medium, teal is low.</p>
                         </div>
                     </aside>
                 </div>

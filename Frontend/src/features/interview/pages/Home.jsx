@@ -9,7 +9,7 @@ import GeneratingScreen from '../../ui/GeneratingScreen'
 const MAX_JD = 5000
 const MAX_FILE_MB = 3
 
-const scoreTone = (n) => (n >= 80 ? 'text-accent-3' : n >= 60 ? 'text-accent' : 'text-accent-2')
+const scoreTone = (n) => (n >= 80 ? 'text-accent' : n >= 60 ? 'text-accent-2' : 'text-danger')
 
 const Home = () => {
 
@@ -164,7 +164,7 @@ const Home = () => {
                                 >
                                     {uploadSuccess ? (
                                         <>
-                                            <span className="grid h-11 w-11 place-items-center rounded-full bg-accent-3 text-[#04131a]" aria-hidden>
+                                            <span className="grid h-11 w-11 place-items-center rounded-full bg-accent text-on-accent" aria-hidden>
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5 9-10" /></svg>
                                             </span>
                                             <p className="font-semibold break-all">{uploadedFileName}</p>
@@ -201,7 +201,7 @@ const Home = () => {
                     </div>
 
                     {error && (
-                        <p role="alert" className="mx-6 mb-2 rounded-xl border border-accent-2/50 bg-accent-2/10 px-4 py-3 text-sm sm:mx-8">{error}</p>
+                        <p role="alert" className="mx-6 mb-2 rounded-xl border border-danger/50 bg-danger/10 px-4 py-3 text-sm sm:mx-8">{error}</p>
                     )}
 
                     <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-6 py-5 sm:px-8">
@@ -217,7 +217,7 @@ const Home = () => {
                 {reports.length > 0 && (
                     <section className="enter mt-16">
                         <h2 className="text-2xl font-bold">My recent interview plans</h2>
-                        {deleteError && <p role="alert" className="mt-4 rounded-xl border border-accent-2/50 bg-accent-2/10 px-4 py-3 text-sm">{deleteError}</p>}
+                        {deleteError && <p role="alert" className="mt-4 rounded-xl border border-danger/50 bg-danger/10 px-4 py-3 text-sm">{deleteError}</p>}
                         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             {reports.map((report) => {
                                 const confirming = confirmId === report._id
@@ -238,7 +238,7 @@ const Home = () => {
                                             onClick={() => setConfirmId(report._id)}
                                             aria-label={`Delete plan ${report.title || 'Untitled position'}`}
                                             title="Delete this plan"
-                                            className="absolute top-4 right-4 grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-line text-muted transition-colors hover:border-accent-2 hover:bg-accent-2/10 hover:text-accent-2"
+                                            className="absolute top-4 right-4 grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-line text-muted transition-colors hover:border-danger hover:bg-danger/10 hover:text-danger"
                                         >
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6" /></svg>
                                         </button>
@@ -252,7 +252,7 @@ const Home = () => {
                                                     <button
                                                         onClick={() => handleDelete(report._id)}
                                                         disabled={deleting}
-                                                        className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-accent-2 px-5 py-2 text-sm font-bold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+                                                        className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-danger px-5 py-2 text-sm font-bold text-on-accent transition-transform hover:-translate-y-0.5 disabled:opacity-60"
                                                     >
                                                         {deleting ? 'Deleting' : 'Delete'}
                                                     </button>

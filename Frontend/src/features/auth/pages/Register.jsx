@@ -50,7 +50,7 @@ const Register = () => {
                         type="password" id="password" name="password" placeholder="Choose a password" autoComplete="new-password" required />
                 </div>
 
-                {error && <p role="alert" className="rounded-xl border border-accent-2/50 bg-accent-2/10 px-4 py-3 text-sm">{error}</p>}
+                {error && <p role="alert" className="rounded-xl border border-danger/50 bg-danger/10 px-4 py-3 text-sm">{error}</p>}
 
                 <button className="btn-primary mt-1 w-full" disabled={loading}>
                     {loading ? <><Spinner /> Creating account</> : "Create account"}

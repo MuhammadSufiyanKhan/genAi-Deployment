@@ -28,6 +28,8 @@ const Home = () => {
     const [ error, setError ] = useState("")
 
     useLayoutEffect(() => {
+        // the form is not on screen while a plan is generating, so there is nothing to animate
+        if (!pageRef.current) return
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
         const ctx = gsap.context(() => {
             gsap.from('.enter', { y: 36, opacity: 0, duration: 0.9, stagger: 0.12, ease: 'expo.out' })

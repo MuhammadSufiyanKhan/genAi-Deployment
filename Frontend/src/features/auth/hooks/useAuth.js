@@ -15,8 +15,9 @@ export const useAuth = () => {
         try {
             const data = await login({ email, password })
             setUser(data.user)
+            return { ok: true }
         } catch (err) {
-
+            return { ok: false, message: err?.response?.data?.message || "We could not log you in. Check your details and try again." }
         } finally {
             setLoading(false)
         }
@@ -27,8 +28,9 @@ export const useAuth = () => {
         try {
             const data = await register({ username, email, password })
             setUser(data.user)
+            return { ok: true }
         } catch (err) {
-
+            return { ok: false, message: err?.response?.data?.message || "We could not create your account. Try again." }
         } finally {
             setLoading(false)
         }

@@ -1,8 +1,15 @@
-import React, { useState, useRef } from 'react'
-import "../style/home.scss"
+import React, { useState, useRef, useLayoutEffect } from 'react'
+import gsap from 'gsap'
 import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate, Link } from 'react-router'
 import { useAuth } from '../../auth/hooks/useAuth.js'
+import SiteHeader from '../../ui/SiteHeader'
+import GeneratingScreen from '../../ui/GeneratingScreen'
+
+const MAX_JD = 5000
+const MAX_FILE_MB = 3
+
+const scoreTone = (n) => (n >= 80 ? 'text-accent-3' : n >= 60 ? 'text-accent' : 'text-accent-2')
 
 const Home = () => {
 
@@ -11,18 +18,44 @@ const Home = () => {
     const [ selfDescription, setSelfDescription ] = useState("")
     const [ uploadedFileName, setUploadedFileName ] = useState("")
     const [ uploadSuccess, setUploadSuccess ] = useState(false)
+    const [ dragging, setDragging ] = useState(false)
     const resumeInputRef = useRef()
+    const pageRef = useRef(null)
 
     const navigate = useNavigate()
     const { user } = useAuth()
     const [ error, setError ] = useState("")
 
+    useLayoutEffect(() => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+        const ctx = gsap.context(() => {
+            gsap.from('.enter', { y: 36, opacity: 0, duration: 0.9, stagger: 0.12, ease: 'expo.out' })
+        }, pageRef)
+        return () => ctx.revert()
+    }, [ loading ])
+
     const handleResumeChange = (e) => {
         const file = e.target.files[0]
-        if (file) {
-            setUploadedFileName(file.name)
-            setUploadSuccess(true)
+        if (!file) return
+        if (file.size > MAX_FILE_MB * 1024 * 1024) {
+            setError(`That file is larger than ${MAX_FILE_MB}MB. Upload a smaller PDF.`)
+            resumeInputRef.current.value = ""
+            return
         }
+        setError("")
+        setUploadedFileName(file.name)
+        setUploadSuccess(true)
+    }
+
+    const handleDrop = (e) => {
+        e.preventDefault()
+        setDragging(false)
+        const file = e.dataTransfer.files?.[ 0 ]
+        if (!file) return
+        const dt = new DataTransfer()
+        dt.items.add(file)
+        resumeInputRef.current.files = dt.files
+        handleResumeChange({ target: resumeInputRef.current })
     }
 
     const handleGenerateReport = async () => {
@@ -38,147 +71,152 @@ const Home = () => {
 
     if (loading) {
         return (
-            <main className='loading-screen'>
-                <h1>Loading your interview plan...</h1>
-            </main>
+            <>
+                <SiteHeader />
+                <GeneratingScreen
+                    title="Building your interview plan"
+                    steps={[ 'Reading your resume and the job description', 'Writing questions and model answers', 'Finding your skill gaps', 'Planning your preparation days' ]}
+                />
+            </>
         )
     }
 
+    const canSubmit = jobDescription.trim().length > 0 && (uploadSuccess || selfDescription.trim().length > 0)
+
     return (
-        <div className='home-page'>
+        <div ref={pageRef} className="min-h-screen">
+            <SiteHeader />
 
-            {/* Page Header */}
-            <header className='page-header'>
-                <h1>Create Your Custom <span className='highlight'>Interview Plan</span></h1>
-                <p>Let our AI analyze the job requirements and your unique profile to build a winning strategy.</p>
-                {!user && (
-                    <p className='guest-note'>No account needed. <Link to='/login'>Log in</Link> if you want your plans saved.</p>
-                )}
-            </header>
+            <main className="mx-auto max-w-6xl px-5 pt-12 pb-24 sm:px-8 sm:pt-16">
+                <header className="enter max-w-3xl">
+                    <h1 className="text-[clamp(2rem,4.6vw,3.4rem)] leading-[1.05] font-extrabold">
+                        Create your custom <span className="text-gradient">interview plan</span>
+                    </h1>
+                    <p className="mt-5 text-lg text-muted">
+                        Paste the job description and add your resume or a few lines about yourself. We will build the questions, answers and a plan to get you ready.
+                    </p>
+                    {!user && (
+                        <p className="mt-3 text-sm text-muted">
+                            No account needed. <Link to="/login" className="font-semibold text-accent hover:underline">Log in</Link> if you want your plans saved.
+                        </p>
+                    )}
+                </header>
 
-            {/* Main Card */}
-            <div className='interview-card'>
-                <div className='interview-card__body'>
-
-                    {/* Left Panel - Job Description */}
-                    <div className='panel panel--left'>
-                        <div className='panel__header'>
-                            <span className='panel__icon'>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>
-                            </span>
-                            <h2>Target Job Description</h2>
-                            <span className='badge badge--required'>Required</span>
-                        </div>
-                        <textarea
-                            onChange={(e) => { setJobDescription(e.target.value) }}
-                            className='panel__textarea'
-                            placeholder={`Paste the full job description here...\ne.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'`}
-                            maxLength={5000}
-                        />
-                        <div className='char-counter'>0 / 5000 chars</div>
-                    </div>
-
-                    {/* Vertical Divider */}
-                    <div className='panel-divider' />
-
-                    {/* Right Panel - Profile */}
-                    <div className='panel panel--right'>
-                        <div className='panel__header'>
-                            <span className='panel__icon'>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-                            </span>
-                            <h2>Your Profile</h2>
-                        </div>
-
-                        {/* Upload Resume */}
-                        <div className='upload-section'>
-                            <label className='section-label'>
-                                Upload Resume
-                                <span className='badge badge--best'>Best Results</span>
-                            </label>
-                            <label className={`dropzone ${uploadSuccess ? 'dropzone--success' : ''}`} htmlFor='resume'>
-                                <span className='dropzone__icon'>
-                                    {uploadSuccess ? (
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                                    ) : (
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
-                                    )}
+                <div className="enter glass mt-10 overflow-hidden rounded-[2rem] shadow-[0_40px_100px_-50px_var(--glow)]">
+                    <div className="grid lg:grid-cols-2">
+                        {/* Job description */}
+                        <section className="flex flex-col gap-4 p-6 sm:p-8">
+                            <div className="flex items-center gap-3">
+                                <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent/15 text-accent" aria-hidden>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>
                                 </span>
-                                {uploadSuccess ? (
-                                    <>
-                                        <p className='dropzone__title'>✓ Resume Uploaded Successfully!</p>
-                                        <p className='dropzone__subtitle'>{uploadedFileName}</p>
-                                    </>
-                                ) : (
-                                    <>
-                                        <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
-                                        <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
-                                    </>
-                                )}
-                                <input ref={resumeInputRef} onChange={handleResumeChange} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
-                            </label>
-                        </div>
-
-                        {/* OR Divider */}
-                        <div className='or-divider'><span>OR</span></div>
-
-                        {/* Quick Self-Description */}
-                        <div className='self-description'>
-                            <label className='section-label' htmlFor='selfDescription'>Quick Self-Description</label>
+                                <h2 className="text-xl font-bold">Target job description</h2>
+                                <span className="ml-auto rounded-full bg-accent-2/15 px-3 py-1 text-xs font-bold text-accent-2">Required</span>
+                            </div>
+                            <label htmlFor="jobDescription" className="sr-only">Job description</label>
                             <textarea
-                                onChange={(e) => { setSelfDescription(e.target.value) }}
-                                id='selfDescription'
-                                name='selfDescription'
-                                className='panel__textarea panel__textarea--short'
-                                placeholder="Briefly describe your experience, key skills, and years of experience if you don't have a resume handy..."
+                                id="jobDescription"
+                                value={jobDescription}
+                                onChange={(e) => setJobDescription(e.target.value)}
+                                className="field min-h-72 flex-1 resize-y leading-relaxed"
+                                placeholder={`Paste the full job description here...\ne.g. 'Senior Frontend Engineer requires React, TypeScript and large-scale system design...'`}
+                                maxLength={MAX_JD}
                             />
-                        </div>
+                            <p className="text-right text-xs text-muted">{jobDescription.length} / {MAX_JD}</p>
+                        </section>
 
-                        {/* Info Box */}
-                        <div className='info-box'>
-                            <span className='info-box__icon'>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" stroke="#1a1f27" strokeWidth="2" /><line x1="12" y1="16" x2="12.01" y2="16" stroke="#1a1f27" strokeWidth="2" /></svg>
-                            </span>
-                            <p>Either a <strong>Resume</strong> or a <strong>Self Description</strong> is required to generate a personalized plan.</p>
-                        </div>
+                        {/* Profile */}
+                        <section className="flex flex-col gap-5 border-t border-line p-6 sm:p-8 lg:border-t-0 lg:border-l">
+                            <div className="flex items-center gap-3">
+                                <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-3/15 text-accent-3" aria-hidden>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                                </span>
+                                <h2 className="text-xl font-bold">Your profile</h2>
+                            </div>
+
+                            <div>
+                                <p className="mb-2 flex items-center gap-2 text-sm font-semibold">
+                                    Upload resume <span className="rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-bold text-accent">Best results</span>
+                                </p>
+                                <label
+                                    htmlFor="resume"
+                                    onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+                                    onDragLeave={() => setDragging(false)}
+                                    onDrop={handleDrop}
+                                    className={`flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed px-5 py-8 text-center transition-all duration-300 ${uploadSuccess ? 'border-accent-3 bg-accent-3/10' : dragging ? 'scale-[1.01] border-accent bg-accent/10' : 'border-line hover:border-accent hover:bg-accent/5'}`}
+                                >
+                                    {uploadSuccess ? (
+                                        <>
+                                            <span className="grid h-11 w-11 place-items-center rounded-full bg-accent-3 text-[#04131a]" aria-hidden>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5 9-10" /></svg>
+                                            </span>
+                                            <p className="font-semibold break-all">{uploadedFileName}</p>
+                                            <p className="text-sm text-muted">Uploaded. Click to choose a different file.</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="grid h-11 w-11 place-items-center rounded-full bg-accent/15 text-accent" aria-hidden>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 16V4M6 10l6-6 6 6M4 20h16" /></svg>
+                                            </span>
+                                            <p className="font-semibold">Click to upload or drag and drop</p>
+                                            <p className="text-sm text-muted">PDF only, up to {MAX_FILE_MB}MB</p>
+                                        </>
+                                    )}
+                                    <input ref={resumeInputRef} onChange={handleResumeChange} hidden type="file" id="resume" name="resume" accept=".pdf,application/pdf" />
+                                </label>
+                            </div>
+
+                            <div className="flex items-center gap-4 text-xs font-bold text-muted" aria-hidden>
+                                <span className="h-px flex-1 bg-line" />or<span className="h-px flex-1 bg-line" />
+                            </div>
+
+                            <div>
+                                <label htmlFor="selfDescription" className="mb-2 block text-sm font-semibold">Quick self-description</label>
+                                <textarea
+                                    id="selfDescription"
+                                    value={selfDescription}
+                                    onChange={(e) => setSelfDescription(e.target.value)}
+                                    className="field min-h-32 resize-y"
+                                    placeholder="Briefly describe your experience, key skills and years of experience if you don't have a resume handy..."
+                                />
+                            </div>
+                        </section>
+                    </div>
+
+                    {error && (
+                        <p role="alert" className="mx-6 mb-2 rounded-xl border border-accent-2/50 bg-accent-2/10 px-4 py-3 text-sm sm:mx-8">{error}</p>
+                    )}
+
+                    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-6 py-5 sm:px-8">
+                        <p className="text-sm text-muted">Add the job description, plus a resume or a short description. Takes about 30 seconds.</p>
+                        <button onClick={handleGenerateReport} disabled={!canSubmit} className="btn-primary !px-8 !py-4">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" /></svg>
+                            Generate my interview strategy
+                        </button>
                     </div>
                 </div>
 
-                {/* Card Footer */}
-                {error && <p className='form-error' role='alert'>{error}</p>}
-                <div className='interview-card__footer'>
-                    <span className='footer-info'>AI-Powered Strategy Generation &bull; Approx 30s</span>
-                    <button
-                        onClick={handleGenerateReport}
-                        className='generate-btn'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" /></svg>
-                        Generate My Interview Strategy
-                    </button>
-                </div>
-            </div>
-
-            {/* Recent Reports List */}
-            {reports.length > 0 && (
-                <section className='recent-reports'>
-                    <h2>My Recent Interview Plans</h2>
-                    <ul className='reports-list'>
-                        {reports.map(report => (
-                            <li key={report._id} className='report-item' onClick={() => navigate(`/interview/${report._id}`)}>
-                                <h3>{report.title || 'Untitled Position'}</h3>
-                                <p className='report-meta'>Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
-                                <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>Match Score: {report.matchScore}%</p>
-                            </li>
-                        ))}
-                    </ul>
-                </section>
-            )}
-
-            {/* Page Footer */}
-            <footer className='page-footer'>
-                <a href='#'>Privacy Policy</a>
-                <a href='#'>Terms of Service</a>
-                <a href='#'>Help Center</a>
-            </footer>
+                {/* Recent reports (logged-in users) */}
+                {reports.length > 0 && (
+                    <section className="enter mt-16">
+                        <h2 className="text-2xl font-bold">My recent interview plans</h2>
+                        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {reports.map((report) => (
+                                <li key={report._id}>
+                                    <button
+                                        onClick={() => navigate(`/interview/${report._id}`)}
+                                        className="glass group w-full cursor-pointer rounded-2xl p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-accent"
+                                    >
+                                        <h3 className="text-lg font-bold">{report.title || 'Untitled position'}</h3>
+                                        <p className="mt-1 text-sm text-muted">Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
+                                        <p className={`mt-4 text-sm font-bold ${scoreTone(report.matchScore)}`}>Match score: {report.matchScore}%</p>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                )}
+            </main>
         </div>
     )
 }

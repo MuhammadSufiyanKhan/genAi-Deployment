@@ -1,6 +1,8 @@
-import React,{useState} from 'react'
+import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
+import AuthShell from '../components/AuthShell'
+import Spinner from '../../ui/Spinner'
 
 const Register = () => {
 
@@ -8,52 +10,51 @@ const Register = () => {
     const [ username, setUsername ] = useState("")
     const [ email, setEmail ] = useState("")
     const [ password, setPassword ] = useState("")
+    const [ error, setError ] = useState("")
 
-    const {loading,handleRegister} = useAuth()
-    
+    const { loading, handleRegister } = useAuth()
+
     const handleSubmit = async (e) => {
         e.preventDefault()
-        await handleRegister({username,email,password})
-        navigate("/app")
-    }
-
-    if(loading){
-        return (<main><h1>Loading.......</h1></main>)
+        setError("")
+        const result = await handleRegister({ username, email, password })
+        if (result?.ok) {
+            navigate("/app")
+        } else {
+            setError(result?.message || "We could not create your account. Try again.")
+        }
     }
 
     return (
-        <main>
-            <div className="form-container">
-                <h1>Register</h1>
+        <AuthShell
+            title="Create your account"
+            subtitle="It takes a few seconds. Your plans will be saved."
+            footer={<>Already have an account? <Link to="/login" className="font-semibold text-accent hover:underline">Log in</Link></>}
+        >
+            <form onSubmit={handleSubmit} className="grid gap-4">
+                <div className="grid gap-2">
+                    <label htmlFor="username" className="text-sm font-semibold">Username</label>
+                    <input className="field" onChange={(e) => setUsername(e.target.value)} value={username}
+                        type="text" id="username" name="username" placeholder="Your name" autoComplete="username" required />
+                </div>
+                <div className="grid gap-2">
+                    <label htmlFor="email" className="text-sm font-semibold">Email</label>
+                    <input className="field" onChange={(e) => setEmail(e.target.value)} value={email}
+                        type="email" id="email" name="email" placeholder="you@example.com" autoComplete="email" required />
+                </div>
+                <div className="grid gap-2">
+                    <label htmlFor="password" className="text-sm font-semibold">Password</label>
+                    <input className="field" onChange={(e) => setPassword(e.target.value)} value={password}
+                        type="password" id="password" name="password" placeholder="Choose a password" autoComplete="new-password" required />
+                </div>
 
-                <form onSubmit={handleSubmit}>
+                {error && <p role="alert" className="rounded-xl border border-accent-2/50 bg-accent-2/10 px-4 py-3 text-sm">{error}</p>}
 
-                    <div className="input-group">
-                        <label htmlFor="username">Username</label>
-                        <input
-                            onChange={(e) => { setUsername(e.target.value) }}
-                            type="text" id="username" name='username' placeholder='Enter username' />
-                    </div>
-                    <div className="input-group">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            onChange={(e) => { setEmail(e.target.value) }}
-                            type="email" id="email" name='email' placeholder='Enter email address' />
-                    </div>
-                    <div className="input-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            onChange={(e) => { setPassword(e.target.value) }}
-                            type="password" id="password" name='password' placeholder='Enter password' />
-                    </div>
-
-                    <button className='button primary-button' >Register</button>
-
-                </form>
-
-                <p>Already have an account? <Link to={"/login"} >Login</Link> </p>
-            </div>
-        </main>
+                <button className="btn-primary mt-1 w-full" disabled={loading}>
+                    {loading ? <><Spinner /> Creating account</> : "Create account"}
+                </button>
+            </form>
+        </AuthShell>
     )
 }
 

@@ -144,4 +144,44 @@ async function deleteInterviewReportController(req, res) {
     res.status(200).json({ message: "Interview report deleted successfully." })
 }
 
-module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generateResumePdfController, deleteInterviewReportController }
+/**
+ * @description Controller to save a report to the logged in user's account (saved: true)
+ * or release it from the account (saved: false).
+ */
+async function setInterviewReportSavedController(req, res) {
+    const { interviewId } = req.params
+    const { saved } = req.body || {}
+
+    if (typeof saved !== "boolean") {
+        return res.status(400).json({ message: "Send saved as true or false." })
+    }
+
+    if (!mongoose.isValidObjectId(interviewId)) {
+        return res.status(404).json({ message: "Interview report not found." })
+    }
+
+    const report = saved
+        // a guest report (no owner) or one the user already owns can be saved
+        ? await interviewReportModel.findOneAndUpdate(
+            { _id: interviewId, $or: [ { user: { $exists: false } }, { user: null }, { user: req.user.id } ] },
+            { $set: { user: req.user.id } },
+            { new: true }
+        )
+        // only the owner can release it
+        : await interviewReportModel.findOneAndUpdate(
+            { _id: interviewId, user: req.user.id },
+            { $unset: { user: 1 } },
+            { new: true }
+        )
+
+    if (!report) {
+        return res.status(404).json({ message: "Interview report not found." })
+    }
+
+    res.status(200).json({
+        message: saved ? "Report saved to your account." : "Report removed from your account.",
+        saved
+    })
+}
+
+module.exports = { setInterviewReportSavedController, generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generateResumePdfController, deleteInterviewReportController }

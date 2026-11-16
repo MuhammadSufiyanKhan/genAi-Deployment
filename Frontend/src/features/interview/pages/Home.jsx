@@ -205,7 +205,7 @@ const Home = () => {
                     )}
 
                     <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-6 py-5 sm:px-8">
-                        <p className="text-sm text-muted">Add the job description, plus a resume or a short description. Takes about 30 seconds.</p>
+                        <p className="text-sm text-muted">Add the job description, plus a resume or a short description. Your report has 20+ questions and takes up to a minute to build.</p>
                         <button onClick={handleGenerateReport} disabled={!canSubmit} className="btn-primary !px-8 !py-4">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" /></svg>
                             Generate my interview strategy

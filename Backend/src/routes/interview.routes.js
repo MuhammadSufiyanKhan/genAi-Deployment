@@ -24,6 +24,14 @@ interviewRouter.get("/report/:interviewId", authMiddleware.optionalAuth, intervi
 
 
 /**
+ * @route PUT /api/interview/report/:interviewId/save
+ * @description save a report to the logged in user's account, or release it ({ saved: boolean }).
+ * @access private
+ */
+interviewRouter.put("/report/:interviewId/save", authMiddleware.authUser, interviewController.setInterviewReportSavedController)
+
+
+/**
  * @route DELETE /api/interview/report/:interviewId
  * @description delete one interview report of the logged in user.
  * @access private

@@ -31,26 +31,51 @@ const interviewReportSchema = z.object({
     title: z.string().describe("The title of the job for which the interview report is generated"),
 })
 
+// Reports must have at least this many questions by default
+const TARGET_TECHNICAL = 15
+const TARGET_BEHAVIORAL = 10
+const MIN_TOTAL_QUESTIONS = 20
+
+const countQuestions = (report) =>
+    (report?.technicalQuestions?.length || 0) + (report?.behavioralQuestions?.length || 0)
+
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
 
 
-    const prompt = `Generate an interview report for a candidate with the following details:
+    const buildPrompt = (extra = "") => `Generate an interview report for a candidate with the following details:
                         Resume: ${resume}
                         Self Description: ${selfDescription}
                         Job Description: ${jobDescription}
-`
 
-    const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(interviewReportSchema),
-        }
-    })
+Requirements for the report:
+- Write at least ${TARGET_TECHNICAL} technical questions and at least ${TARGET_BEHAVIORAL} behavioral questions (${MIN_TOTAL_QUESTIONS}+ in total). Cover a wide range of topics from the job description and the candidate's background, from fundamentals to advanced and scenario based questions.
+- Every question needs an "intention" (what the interviewer wants to learn, one sentence) and an "answer" (how to answer it well, 3 to 5 sentences with concrete points). Keep answers focused so the whole report stays complete.
+- Do not repeat questions.
+${extra}`
 
-    return JSON.parse(response.text)
+    const generate = async (extra) => {
+        const response = await ai.models.generateContent({
+            model: "gemini-3-flash-preview",
+            contents: buildPrompt(extra),
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: zodToJsonSchema(interviewReportSchema),
+                maxOutputTokens: 30000,
+            }
+        })
 
+        return JSON.parse(response.text)
+    }
+
+    let report = await generate()
+
+    // If the model came back with too few questions, ask once more with a firmer instruction
+    if (countQuestions(report) < MIN_TOTAL_QUESTIONS) {
+        const retry = await generate(`IMPORTANT: a previous attempt returned too few questions. You must return at least ${TARGET_TECHNICAL} technical and ${TARGET_BEHAVIORAL} behavioral questions.`)
+        if (countQuestions(retry) > countQuestions(report)) report = retry
+    }
+
+    return report
 
 }
 

@@ -1,4 +1,4 @@
-import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf, deleteInterviewReport } from "../services/interview.api"
+import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf, deleteInterviewReport, setInterviewReportSaved } from "../services/interview.api"
 import { useContext, useEffect } from "react"
 import { InterviewContext } from "../interview.context"
 import { useParams } from "react-router"
@@ -76,6 +76,18 @@ export const useInterview = () => {
         }
     }
 
+    const saveReport = async (interviewId, saved) => {
+        try {
+            await setInterviewReportSaved(interviewId, saved)
+            // keep the open report in sync: it belongs to the user when saved
+            setReport((current) => (current ? { ...current, user: saved ? user?.id : null } : current))
+            return { ok: true }
+        } catch (error) {
+            console.log(error)
+            return { ok: false, message: error?.response?.data?.message || "We could not update this report. Try again." }
+        }
+    }
+
     const getResumePdf = async (interviewReportId) => {
         try {
             const response = await generateResumePdf({ interviewReportId })
@@ -104,6 +116,6 @@ export const useInterview = () => {
         }
     }, [ interviewId, userId ])
 
-    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf, deleteReport }
+    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf, deleteReport, saveReport }
 
 }

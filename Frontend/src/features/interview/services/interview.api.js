@@ -67,3 +67,14 @@ export const deleteInterviewReport = async (interviewId) => {
 
     return response.data
 }
+
+
+
+/**
+ * @description Service to save a report to the logged in user's account (saved = true) or release it (saved = false).
+ */
+export const setInterviewReportSaved = async (interviewId, saved) => {
+    const response = await api.put(`/api/interview/report/${interviewId}/save`, { saved })
+
+    return response.data
+}

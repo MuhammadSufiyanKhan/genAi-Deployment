@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router'
+import { useNavigate, useLocation, Link } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 import AuthShell from '../components/AuthShell'
 import Spinner from '../../ui/Spinner'
+import { afterAuthTarget } from '../afterAuthTarget'
 
 const Register = () => {
 
     const navigate = useNavigate()
+    const { search } = useLocation()
     const [ username, setUsername ] = useState("")
     const [ email, setEmail ] = useState("")
     const [ password, setPassword ] = useState("")
@@ -19,7 +21,7 @@ const Register = () => {
         setError("")
         const result = await handleRegister({ username, email, password })
         if (result?.ok) {
-            navigate("/app")
+            navigate(afterAuthTarget(search))
         } else {
             setError(result?.message || "We could not create your account. Try again.")
         }
@@ -29,7 +31,7 @@ const Register = () => {
         <AuthShell
             title="Create your account"
             subtitle="It takes a few seconds. Your plans will be saved."
-            footer={<>Already have an account? <Link to="/login" className="font-semibold text-accent hover:underline">Log in</Link></>}
+            footer={<>Already have an account? <Link to={`/login${search}`} className="font-semibold text-accent hover:underline">Log in</Link></>}
         >
             <form onSubmit={handleSubmit} className="grid gap-4">
                 <div className="grid gap-2">

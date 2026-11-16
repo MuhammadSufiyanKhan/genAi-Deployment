@@ -39,7 +39,7 @@ const cards = [
 const steps = [
     { title: 'Add your resume', body: 'Upload a PDF, or just write a few lines about yourself. Both work.' },
     { title: 'Paste the job description', body: 'Use the real posting. Everything in your plan is based on what that role asks for.' },
-    { title: 'Read your strategy', body: 'Questions, model answers, skill gaps and a day-by-day plan, ready in about 30 seconds.' }
+    { title: 'Read your strategy', body: 'Questions, model answers, skill gaps and a day-by-day plan, ready in about a minute.' }
 ]
 
 const gaps = [
@@ -211,7 +211,7 @@ const Landing = () => {
                     {/* questions */}
                     <div data-reveal className='glass rounded-3xl p-7 md:col-span-3'>
                         <h3 className='text-xl font-bold'>Questions with the reason behind them</h3>
-                        <p className='mt-3 text-muted'>Each question comes with what the interviewer wants to learn and a model answer you can adapt.</p>
+                        <p className='mt-3 text-muted'>Every report has 20+ questions. Each one comes with what the interviewer wants to learn and a model answer you can adapt.</p>
                         <div className='mt-6 flex flex-wrap gap-2'>
                             {[ 'Technical', 'Behavioral', 'Intent', 'Model answer' ].map((t) => (
                                 <span key={t} className='rounded-full border border-line px-3 py-1 text-xs font-semibold text-muted'>{t}</span>

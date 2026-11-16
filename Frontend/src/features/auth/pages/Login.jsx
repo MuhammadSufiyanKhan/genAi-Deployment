@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router'
+import { useNavigate, useLocation, Link } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 import AuthShell from '../components/AuthShell'
 import Spinner from '../../ui/Spinner'
+import { afterAuthTarget } from '../afterAuthTarget'
 
 const Login = () => {
 
     const { loading, handleLogin } = useAuth()
     const navigate = useNavigate()
+    const { search } = useLocation()
 
     const [ email, setEmail ] = useState("")
     const [ password, setPassword ] = useState("")
@@ -18,7 +20,7 @@ const Login = () => {
         setError("")
         const result = await handleLogin({ email, password })
         if (result?.ok) {
-            navigate('/app')
+            navigate(afterAuthTarget(search))
         } else {
             setError(result?.message || "We could not log you in. Try again.")
         }
@@ -28,7 +30,7 @@ const Login = () => {
         <AuthShell
             title="Welcome back"
             subtitle="Log in to see your saved plans."
-            footer={<>Don't have an account? <Link to="/register" className="font-semibold text-accent hover:underline">Register</Link></>}
+            footer={<>Don't have an account? <Link to={`/register${search}`} className="font-semibold text-accent hover:underline">Register</Link></>}
         >
             <form onSubmit={handleSubmit} className="grid gap-4">
                 <div className="grid gap-2">

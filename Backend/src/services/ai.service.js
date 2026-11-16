@@ -1,7 +1,6 @@
 const { GoogleGenAI } = require("@google/genai")
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
-const puppeteer = require("puppeteer")
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
@@ -57,23 +56,40 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
 
+// On Vercel there is no Chrome installed, so use a serverless Chromium build.
+// Locally, fall back to the regular puppeteer package (dev dependency).
+async function launchBrowser() {
+    if (process.env.VERCEL) {
+        const { default: chromium } = await import("@sparticuz/chromium")
+        const puppeteer = require("puppeteer-core")
+        return puppeteer.launch({
+            args: await puppeteer.defaultArgs({ args: chromium.args, headless: "shell" }),
+            executablePath: await chromium.executablePath(),
+            headless: "shell"
+        })
+    }
+
+    return require("puppeteer").launch()
+}
+
 async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" })
+    const browser = await launchBrowser()
 
-    const pdfBuffer = await page.pdf({
-        format: "A4", margin: {
-            top: "20mm",
-            bottom: "20mm",
-            left: "15mm",
-            right: "15mm"
-        }
-    })
+    try {
+        const page = await browser.newPage()
+        await page.setContent(htmlContent, { waitUntil: "networkidle0" })
 
-    await browser.close()
-
-    return pdfBuffer
+        return await page.pdf({
+            format: "A4", margin: {
+                top: "20mm",
+                bottom: "20mm",
+                left: "15mm",
+                right: "15mm"
+            }
+        })
+    } finally {
+        await browser.close()
+    }
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {

@@ -13,6 +13,7 @@ const allowedOrigins = [
     "http://localhost:5173",
     "https://frontend-wine-psi-17.vercel.app",
     "https://genai-deployment.vercel.app",
+    "https://interviewprep-assistant-ai.vercel.app",
     ...(process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",").map(o => o.trim()) : [])
 ]
 const vercelFrontendPattern = /^https:\/\/frontend-[a-z0-9-]+-muhammadsufiyankhans-projects\.vercel\.app$/

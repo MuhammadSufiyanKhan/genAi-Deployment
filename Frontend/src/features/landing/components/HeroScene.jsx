@@ -36,8 +36,8 @@ const fragment = /* glsl */ `
 `
 
 const palette = {
-    dark: { a: "#ff8a5c", b: "#ffc247", ring: "#6b8dff", alpha: 1, blending: THREE.AdditiveBlending },
-    light: { a: "#e8532c", b: "#2f5bd9", ring: "#c77a07", alpha: 0.9, blending: THREE.NormalBlending }
+    dark: { a: "#ff7a4d", b: "#e9eaf0", ring: "#ff6a3d", alpha: 1, blending: THREE.AdditiveBlending },
+    light: { a: "#e2552b", b: "#2a2e3a", ring: "#e2552b", alpha: 0.9, blending: THREE.NormalBlending }
 }
 
 // Fibonacci sphere: evenly spread points on a sphere

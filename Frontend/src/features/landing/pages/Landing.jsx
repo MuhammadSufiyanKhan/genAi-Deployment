@@ -43,9 +43,9 @@ const steps = [
 ]
 
 const gaps = [
-    { skill: 'Kubernetes', level: 'High', w: 86, color: 'bg-danger' },
-    { skill: 'GraphQL', level: 'Medium', w: 58, color: 'bg-accent-2' },
-    { skill: 'Terraform', level: 'Low', w: 30, color: 'bg-accent-3' }
+    { skill: 'Kubernetes', level: 'High', w: 86, color: 'bg-accent' },
+    { skill: 'GraphQL', level: 'Medium', w: 58, color: 'bg-fg/45' },
+    { skill: 'Terraform', level: 'Low', w: 30, color: 'bg-fg/25' }
 ]
 
 const closing = 'Your next interview is easier with a plan.'.split(' ')
@@ -125,7 +125,7 @@ const Landing = () => {
                 <HeroScene />
                 <div className='relative mx-auto w-full max-w-6xl'>
                     <p className='hero-fade glass mb-7 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-muted'>
-                        <span className='h-2 w-2 animate-pulse rounded-full bg-accent-3' />
+                        <span className='h-2 w-2 animate-pulse rounded-full bg-accent' />
                         AI interview coach. No sign-up needed.
                     </p>
 

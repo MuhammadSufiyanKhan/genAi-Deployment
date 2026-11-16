@@ -5,38 +5,38 @@
 
 /* ── Theme tokens: light by default, overridden in .dark ───────────────── */
 :root {
-    --bg: #f5f6ff;
-    --bg-soft: #e9ebff;
-    --fg: #101433;
-    --muted: #565d85;
-    --card: rgba(255, 255, 255, 0.8);
+    --bg: #f7f7f8;
+    --bg-soft: #ececef;
+    --fg: #111216;
+    --muted: #5d606b;
+    --card: rgba(255, 255, 255, 0.85);
     --card-solid: #ffffff;
-    --line: rgba(28, 36, 110, 0.14);
-    --accent: #e8532c;       /* coral */
-    --accent-2: #c77a07;     /* amber */
-    --accent-3: #2f5bd9;     /* royal blue */
-    --danger: #c92a3e;       /* red */
-    --success: #1c9a5b;      /* green */
-    --on-accent: #1d0b04;
-    --glow: rgba(232, 83, 44, 0.24);
+    --line: rgba(17, 18, 22, 0.12);
+    --accent: #e2552b;       /* the one brand color: coral */
+    --accent-2: #cf4a22;     /* coral, a shade deeper */
+    --accent-3: #5a6479;     /* neutral slate */
+    --danger: #c92a3e;       /* errors and deletes only */
+    --success: #1c9a5b;
+    --on-accent: #1a0a04;
+    --glow: rgba(226, 85, 43, 0.2);
     color-scheme: light;
 }
 
 .dark {
-    --bg: #0a1030;
-    --bg-soft: #111a4a;
-    --fg: #f3f5ff;
-    --muted: #a4acd8;
-    --card: rgba(255, 255, 255, 0.07);
-    --card-solid: #131c52;
-    --line: rgba(255, 255, 255, 0.14);
-    --accent: #ff7a45;       /* coral */
-    --accent-2: #ffc247;     /* amber */
-    --accent-3: #6b8dff;     /* royal blue */
-    --danger: #ff5d6e;       /* red */
-    --success: #3ccf86;      /* green */
-    --on-accent: #1d0b04;
-    --glow: rgba(255, 122, 69, 0.26);
+    --bg: #0d0e11;
+    --bg-soft: #16181d;
+    --fg: #f4f4f5;
+    --muted: #9a9ca6;
+    --card: rgba(255, 255, 255, 0.05);
+    --card-solid: #16181d;
+    --line: rgba(255, 255, 255, 0.1);
+    --accent: #ff6a3d;       /* the one brand color: coral */
+    --accent-2: #ff8a5c;     /* coral, a shade lighter */
+    --accent-3: #9aa3b8;     /* neutral slate */
+    --danger: #f0555f;       /* errors and deletes only */
+    --success: #3ccf86;
+    --on-accent: #1a0a04;
+    --glow: rgba(255, 106, 61, 0.2);
     color-scheme: dark;
 }
 
@@ -116,10 +116,7 @@
     }
 
     .text-gradient {
-        background: linear-gradient(100deg, var(--accent) 0%, var(--accent-2) 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
+        color: var(--accent);
     }
 
     .btn-primary {

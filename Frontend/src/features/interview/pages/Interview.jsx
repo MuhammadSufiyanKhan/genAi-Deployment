@@ -14,9 +14,9 @@ const NAV_ITEMS = [
 ]
 
 const severityStyle = {
-    high: 'border-danger/60 bg-danger/15 text-danger',
-    medium: 'border-accent-2/60 bg-accent-2/15 text-accent-2',
-    low: 'border-accent-3/60 bg-accent-3/15 text-accent-3',
+    high: 'border-accent bg-accent/15 text-accent',
+    medium: 'border-line text-fg',
+    low: 'border-line text-muted',
 }
 
 const Icon = ({ children }) => (
@@ -333,7 +333,7 @@ const Interview = () => {
                                     ))}
                                 </div>
                             )}
-                            <p className="mt-4 text-xs text-muted">Red is high priority, amber is medium, blue is low.</p>
+                            <p className="mt-4 text-xs text-muted">Orange marks the skills that matter most. Grey ones matter less.</p>
                         </div>
                     </aside>
                 </div>
